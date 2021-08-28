@@ -35,6 +35,19 @@ enum LINE_NUMBER {
 	LN_RT
 };
 
+void setNumber(int *pArray);
+void shuffle(int* pArray);
+AI_MODE selectAIMode();
+void outputNumber(int *pArray, int bingoCount);
+bool changeNumber(int* pArray, int input);
+int selectAINumber(int* pArray, AI_MODE mode);
+int bingoCounting(int* pArray);
+int bingoCountingH(int* pArray);
+int bingoCountingV(int* pArray);
+int bingoCountingLTD(int* pArray);
+int bingoCountingRTD(int* pArray);
+
+
 int main() {
 
 	srand((unsigned int)time(0));
@@ -42,58 +55,18 @@ int main() {
 	int bingoBoard[25] = {};
 	int aiBingoBoard[25] = {};
 
-	for (int i = 0; i < 25; i++) {
-		bingoBoard[i] = i + 1;
-		aiBingoBoard[i] = i + 1;
-	}
+	setNumber(bingoBoard);
+	setNumber(aiBingoBoard);
 	
-	int temp, idx1, idx2;
+	shuffle(bingoBoard);
+	shuffle(aiBingoBoard);
 
-	for (int i = 0; i < 100; i++) {
-		idx1 = rand() % 25;
-		idx2 = rand() % 25;
-
-		temp = bingoBoard[idx1];
-		bingoBoard[idx1] = bingoBoard[idx2];
-		bingoBoard[idx2] = temp;
-
-		// ai 숫자 섞기
-		idx1 = rand() % 25;
-		idx2 = rand() % 25;
-
-		temp = aiBingoBoard[idx1];
-		aiBingoBoard[idx1] = aiBingoBoard[idx2];
-		aiBingoBoard[idx2] = temp;
-	}
-
-	int count = 0;
 	int bingoCount = 0;
 	int aiBingoCount = 0;
-	int aiMode;
 
-	// AI 난이도를 선택한다.  
-	while(true) {
-		system("cls");
-		std::cout << "1. Easy" << endl;
-		std::cout << "2. Hard" << endl;
-		std::cout << "AI 모드를 선택하세요 : ";
-		std::cin >> aiMode;
-		if (aiMode >= AM_EASY && aiMode <= AM_HARD)
-			break;
-	}
-
-
-	int input;
-	/*
-	AI Easy 모드는 현재 AI의 숫자목록중 *로 바뀌지 않은 숫자 목록을 만들어서 그 목록 중 하나를 선택하게 한다.(랜덤하게)
-	*/
-	int noneSelect[25];
-	int noneSelectCount = 0;
-
-	// AI Hard 모드
-	int line = 0;
-	int starCount = 0;
-	int saveCount = 0;
+	// AI 난이도를 선택한다. 
+	AI_MODE aiMode = selectAIMode();
+	
 
 	while (true) {
 
@@ -101,18 +74,8 @@ int main() {
 
 		// Player 빙고 출력
 		std::cout << "============ Player ============" << endl;
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 5; j++) {
-				if (bingoBoard[i *5 +j] == INT_MAX)
-					std::cout << '*' << '\t';
-				else
-					std::cout << bingoBoard[i * 5 + j] << '\t';
-			}
-			std::cout << endl;
-		}
-		std::cout << "Player 빙고 수는 " << bingoCount << " 입니다." << endl;
-		std::cout << endl;
-
+		outputNumber(bingoBoard, bingoCount);
+		
 		// AI 빙고 출력
 		std::cout << "============== AI ==============" << endl;
 
@@ -125,18 +88,7 @@ int main() {
 			break;
 		}
 
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 5; j++) {
-				if (aiBingoBoard[i * 5 + j] == INT_MAX)
-					std::cout << '*' << '\t';
-				else
-					std::cout << aiBingoBoard[i * 5 + j] << '\t';
-			}
-			std::cout << endl;
-		}
-		std::cout << "AI 빙고 수는 " << aiBingoCount << " 입니다." << endl;
-		std::cout << endl;
-
+		outputNumber(aiBingoBoard, aiBingoCount);
 
 		// 승패 결정
 		if (bingoCount >= 5) {
@@ -151,260 +103,285 @@ int main() {
 
 		// 숫자 입력
 		std::cout << "위 빙고판의 숫자 중 하나를 입력해주세요(0 : 종료)" << endl;
+		
+		int input;
+		std::cin >> input;
 
-		int a;
-		std::cin >> a;
-
-		if (a == 0)
+		if (input == 0)
 			break;
-		else if (a < 1 || a > 25)
+		else if (input < 1 || input > 25)
 			continue;
 
-		bool flag = true;
-		// Player
-		for (int i = 0; i < 25; i++) {
-			if (bingoBoard[i] == a) {
-				flag = false;
-				bingoBoard[i] = INT_MAX;
-				break;
-			}
-		}
+		// player
+		bool flag = changeNumber(bingoBoard, input);
 
 		if (flag)
 			continue;
 
 		// AI
-		for (int i = 0; i < 25; i++) {
-			if (aiBingoBoard[i] == a) {
-				aiBingoBoard[i] = INT_MAX;
-				break;
-			}
-		}
+		changeNumber(aiBingoBoard, input);
 
-		// AI 난이도 선택
-		
-		switch (aiMode) {
-		case AM_EASY:
-			noneSelectCount = 0;
-			for (int i = 0; i < 25; i++) {
-				if (aiBingoBoard[i] != INT_MAX) {
-					noneSelect[noneSelectCount] = aiBingoBoard[i];
-					noneSelectCount++;
-				}
-			}
-			input = noneSelect[rand() % noneSelectCount];
-
-			break;
+		// ai가 숫자를 선택
+		input = selectAINumber(aiBingoBoard, aiMode);
 
 
-		case AM_HARD:
-			line = 0;
-			starCount = 0;
-			saveCount = 0;
-
-			// 가로 체크
-			for (int i = 0; i < 5; i++) {
-				starCount = 0;
-				for (int j = 0; j < 5; j++) {
-					if (aiBingoBoard[i * 5 + j] == INT_MAX)
-						starCount++;
-				}
-				if (starCount < 5 && saveCount < starCount) {
-					line = i;
-					saveCount = starCount;
-				}
-			}
-
-			// 세로 체크
-			for (int i = 0; i < 5; i++) {
-				starCount = 0;
-				for (int j = 0; j < 5; j++) {
-					if (aiBingoBoard[j * 5 + i] == INT_MAX)
-						starCount++;
-				}
-				if (starCount < 5 && saveCount < starCount) {
-					line = i+5;
-					saveCount = starCount;
-				}
-			}
-
-			// 오른아래 대각선 체크
-			starCount = 0;
-			for (int i = 0; i < 5; i++) {
-				if (bingoBoard[6 * i] == INT_MAX) {
-					starCount++;
-				}
-			}
-			if (starCount < 5 && saveCount < starCount) {
-				line = LN_LT;
-				saveCount = starCount;
-			}
-
-			// 왼아래 대각선 체크
-			starCount = 0;
-			for (int i = 0; i < 5; i++) {
-				if (bingoBoard[4 * (i + 1)] == INT_MAX) {
-					starCount++;
-				}
-			}
-			if (starCount < 5 && saveCount < starCount) {
-				line = LN_RT;
-				saveCount = starCount;
-			}
-
-
-			if (line <= LN_H5) {
-				for (int i = 0; i < 5; i++) {
-					if (aiBingoBoard[line * 5 + i] != INT_MAX) {
-						input = aiBingoBoard[line * 5 + i];
-						break;
-					}
-				}
-			}
-			else if (line <= LN_V5) {
-				for (int i = 0; i < 5; i++) {
-					if (aiBingoBoard[i * 5 + line - 5] != INT_MAX) {
-						input = aiBingoBoard[i * 5 + line - 5];
-						break;
-					}
-				}
-			}
-			else if (line == LN_LT) {
-				for (int i = 0; i < 5; i++) {
-					if (aiBingoBoard[6 * i] == INT_MAX) {
-						input = aiBingoBoard[6 * i];
-						break;
-					}
-				}
-			}
-
-			else if (line == LN_RT) {
-				for (int i = 0; i < 5; i++) {
-					if (aiBingoBoard[4 * (i+1)] == INT_MAX) {
-						input = aiBingoBoard[4 * (i + 1)];
-						break;
-					}
-				}
-			}
-
-			break;
-		default:
-			break;
-		}
-
-		for (int i = 0; i < 25; i++) {
-			if (bingoBoard[i] == input) {
-				bingoBoard[i] = INT_MAX;
-				break;
-			}
-		}
-
-		for (int i = 0; i < 25; i++) {
-			if (aiBingoBoard[i] == input) {
-				aiBingoBoard[i] = INT_MAX;
-				break;
-			}
-		}
+		changeNumber(bingoBoard, input);
+		changeNumber(aiBingoBoard, input);
 
 
 		// 빙고 체크
-		bingoCount = 0;
-		aiBingoCount = 0;
-
-		for (int i = 0; i < 5; i++) {
-			// 가로 빙고 체크
-			for (int j = 0; j < 5; j++) {
-				if (bingoBoard[i * 5 + j] == INT_MAX) {
-					count++;
-				}
-			}
-			if (count == 5) {
-				bingoCount++;
-			}
-			count = 0;
-
-			// 세로 빙고 체크
-			for (int j = 0; j < 5; j++) {
-				if (bingoBoard[j * 5 + i] == INT_MAX) {
-					count++;
-				}
-			}
-			if (count == 5) {
-				bingoCount++;
-			}
-			count = 0;
-
-			// ai 가로 빙고 체크
-			for (int j = 0; j < 5; j++) {
-				if (aiBingoBoard[i * 5 + j] == INT_MAX) {
-					count++;
-				}
-			}
-			if (count == 5) {
-				aiBingoCount++;
-			}
-			count = 0;
-
-			// ai 세로 빙고 체크
-			for (int j = 0; j < 5; j++) {
-				if (aiBingoBoard[j * 5 + i] == INT_MAX) {
-					count++;
-				}
-			}
-			if (count == 5) {
-				aiBingoCount++;
-			}
-			count = 0;
-		}
+		bingoCount = bingoCounting(bingoBoard);
+		aiBingoCount = bingoCounting(aiBingoBoard);
 
 
-		// 오른아래 대각선 체크
-		for (int i = 0; i < 5; i++) {
-			if (bingoBoard[6 * i] == INT_MAX) {
-				count++;
-			}
-		}
-		if (count == 5) {
-			bingoCount++;
-		}
-		count = 0;
-
-		// 왼아래 대각선 체크
-		for (int i = 0; i < 5; i++) {
-			if (bingoBoard[4 * (i + 1)] == INT_MAX) {
-				count++;
-			}
-		}
-		if (count == 5) {
-			bingoCount++;
-		}
-		count = 0;
-
-		// ai 오른아래 대각선 체크
-		for (int i = 0; i < 5; i++) {
-			if (aiBingoBoard[6 * i] == INT_MAX) {
-				count++;
-			}
-		}
-		if (count == 5) {
-			aiBingoCount++;
-		}
-		count = 0;
-
-		// ai 왼아래 대각선 체크
-		for (int i = 0; i < 5; i++) {
-			if (aiBingoBoard[4 * (i + 1)] == INT_MAX) {
-				count++;
-			}
-		}
-		if (count == 5) {
-			aiBingoCount++;
-		}
-		count = 0;
-
+		
 	}
 
 	std::cout << "게임을 종료합니다." << endl;
 
 	return 0;
+}
+
+
+void setNumber(int* pArray) {
+	for (int i = 0; i < 25; i++) {
+		pArray[i] = i + 1;
+	}
+}
+
+void shuffle(int* pArray) {
+	int temp, idx1, idx2;
+
+	for (int i = 0; i < 100; i++) {
+		idx1 = rand() % 25;
+		idx2 = rand() % 25;
+
+		temp = pArray[idx1];
+		pArray[idx1] = pArray[idx2];
+		pArray[idx2] = temp;
+	}
+}
+
+AI_MODE selectAIMode() {
+	int aiMode;
+	while (true) {
+		system("cls");
+		std::cout << "1. Easy" << endl;
+		std::cout << "2. Hard" << endl;
+		std::cout << "AI 모드를 선택하세요 : ";
+		std::cin >> aiMode;
+		if (aiMode >= AM_EASY && aiMode <= AM_HARD)
+			break;
+	}
+	return (AI_MODE)aiMode;
+}
+
+void outputNumber(int* pArray, int bingoCount) {
+	
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			if (pArray[i * 5 + j] == INT_MAX)
+				std::cout << '*' << '\t';
+			else
+				std::cout << pArray[i * 5 + j] << '\t';
+		}
+		std::cout << endl;
+	}
+
+	cout << "bingo Line : " << bingoCount << endl << endl;
+}
+
+bool changeNumber(int* pArray, int input) {
+	for (int i = 0; i < 25; i++) {
+		if (pArray[i] == input) {
+			pArray[i] = INT_MAX;
+			return false;
+		}
+	}
+	return true;
+}
+
+int selectAINumber(int* pArray, AI_MODE mode) {
+	int noneSelect[25] = {};
+	int noneSelectCount;
+	switch (mode) {
+	case AM_EASY:
+		noneSelectCount = 0;
+		for (int i = 0; i < 25; i++) {
+			if (pArray[i] != INT_MAX) {
+				noneSelect[noneSelectCount] = pArray[i];
+				noneSelectCount++;
+			}
+		}
+		return noneSelect[rand() % noneSelectCount];
+
+	case AM_HARD:
+		int line = 0;
+		int starCount = 0;
+		int saveCount = 0;
+
+		// 가로 체크
+		for (int i = 0; i < 5; i++) {
+			starCount = 0;
+			for (int j = 0; j < 5; j++) {
+				if (pArray[i * 5 + j] == INT_MAX)
+					starCount++;
+			}
+			if (starCount < 5 && saveCount < starCount) {
+				line = i;
+				saveCount = starCount;
+			}
+		}
+
+		// 세로 체크
+		for (int i = 0; i < 5; i++) {
+			starCount = 0;
+			for (int j = 0; j < 5; j++) {
+				if (pArray[j * 5 + i] == INT_MAX)
+					starCount++;
+			}
+			if (starCount < 5 && saveCount < starCount) {
+				line = i + 5;
+				saveCount = starCount;
+			}
+		}
+
+		// 오른아래 대각선 체크
+		starCount = 0;
+		for (int i = 0; i < 5; i++) {
+			if (pArray[6 * i] == INT_MAX) {
+				starCount++;
+			}
+		}
+		if (starCount < 5 && saveCount < starCount) {
+			line = LN_LT;
+			saveCount = starCount;
+		}
+
+		// 왼아래 대각선 체크
+		starCount = 0;
+		for (int i = 0; i < 5; i++) {
+			if (pArray[4 * (i + 1)] == INT_MAX) {
+				starCount++;
+			}
+		}
+		if (starCount < 5 && saveCount < starCount) {
+			line = LN_RT;
+			saveCount = starCount;
+		}
+
+
+		if (line <= LN_H5) {
+			for (int i = 0; i < 5; i++) {
+				if (pArray[line * 5 + i] != INT_MAX) {
+					return pArray[line * 5 + i];
+				}
+			}
+		}
+		else if (line <= LN_V5) {
+			for (int i = 0; i < 5; i++) {
+				if (pArray[i * 5 + line - 5] != INT_MAX) {
+					return pArray[i * 5 + line - 5];
+				}
+			}
+		}
+		else if (line == LN_LT) {
+			for (int i = 0; i < 5; i++) {
+				if (pArray[6 * i] == INT_MAX) {
+					return pArray[6 * i];
+				}
+			}
+		}
+
+		else if (line == LN_RT) {
+			for (int i = 0; i < 5; i++) {
+				if (pArray[4 * (i + 1)] == INT_MAX) {
+					return pArray[4 * (i + 1)];
+				}
+			}
+		}
+
+		break;
+	}
+
+	return -1;
+}
+
+int bingoCounting(int* pArray) {
+	int bingo = 0;
+
+	// 가로줄 체크
+	bingo += bingoCountingH(pArray);
+	// 세로줄 체크
+	bingo += bingoCountingV(pArray);
+	// 왼쪽 상단 대각선 체크
+	bingo += bingoCountingLTD(pArray);
+	// 오른쪽 상단 대각선 체크
+	bingo += bingoCountingRTD(pArray);
+
+	return bingo;
+}
+
+int bingoCountingH(int* pArray) {
+	int count = 0;
+	int bingoCount = 0;
+	for (int i = 0; i < 5; i++) {
+		// 가로 빙고 체크
+		for (int j = 0; j < 5; j++) {
+			if (pArray[i * 5 + j] == INT_MAX) {
+				count++;
+			}
+		}
+		if (count == 5)
+			bingoCount++;
+		count = 0;
+	}
+	return bingoCount;
+		
+}
+
+int bingoCountingV(int* pArray) {
+	int count = 0;
+	int bingoCount = 0;
+	for (int i = 0; i < 5; i++) {
+		// 가로 빙고 체크
+		for (int j = 0; j < 5; j++) {
+			if (pArray[j * 5 + i] == INT_MAX) {
+				count++;
+			}
+		}
+		if (count == 5)
+			bingoCount++;
+		count = 0;
+	}
+	return bingoCount;
+}
+	
+
+
+int bingoCountingLTD(int* pArray) {
+	int count = 0;
+	int bingoCount = 0;
+	for (int i = 0; i < 5; i++) {
+		if (pArray[6 * i] == INT_MAX) {
+			count++;
+		}
+	}
+	if (count == 5) 
+		bingoCount++;
+	return bingoCount;
+}
+
+
+int bingoCountingRTD(int* pArray) {
+	int count = 0;
+	int bingoCount = 0;
+	for (int i = 0; i < 5; i++) {
+		if (pArray[4 * (i + 1)] == INT_MAX) {
+			count++;
+		}
+	}
+	if (count == 5) 
+		bingoCount++;
+	return bingoCount;
 }
