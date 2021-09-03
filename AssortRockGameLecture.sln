@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pointer", "pointer\pointer.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "function", "function\function.vcxproj", "{1F3DB22E-15DF-4A01-BB19-14DF2F280FDD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "textRPG2", "textRPG2\textRPG2.vcxproj", "{4CAF8236-FC95-4AD8-B323-AD1C1753B5E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -131,6 +133,14 @@ Global
 		{1F3DB22E-15DF-4A01-BB19-14DF2F280FDD}.Release|x64.Build.0 = Release|x64
 		{1F3DB22E-15DF-4A01-BB19-14DF2F280FDD}.Release|x86.ActiveCfg = Release|Win32
 		{1F3DB22E-15DF-4A01-BB19-14DF2F280FDD}.Release|x86.Build.0 = Release|Win32
+		{4CAF8236-FC95-4AD8-B323-AD1C1753B5E3}.Debug|x64.ActiveCfg = Debug|x64
+		{4CAF8236-FC95-4AD8-B323-AD1C1753B5E3}.Debug|x64.Build.0 = Debug|x64
+		{4CAF8236-FC95-4AD8-B323-AD1C1753B5E3}.Debug|x86.ActiveCfg = Debug|Win32
+		{4CAF8236-FC95-4AD8-B323-AD1C1753B5E3}.Debug|x86.Build.0 = Debug|Win32
+		{4CAF8236-FC95-4AD8-B323-AD1C1753B5E3}.Release|x64.ActiveCfg = Release|x64
+		{4CAF8236-FC95-4AD8-B323-AD1C1753B5E3}.Release|x64.Build.0 = Release|x64
+		{4CAF8236-FC95-4AD8-B323-AD1C1753B5E3}.Release|x86.ActiveCfg = Release|Win32
+		{4CAF8236-FC95-4AD8-B323-AD1C1753B5E3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
