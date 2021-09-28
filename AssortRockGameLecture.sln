@@ -35,6 +35,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dynamicAllocation", "dynami
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "linkedList", "linkedList\linkedList.vcxproj", "{AA1B16A2-4E3F-420E-A827-824AABAFE9BA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "doubleLinkedList", "doubleLinkedList\doubleLinkedList.vcxproj", "{BF129D95-0DEA-4851-B176-6A97033F1E34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -171,6 +173,14 @@ Global
 		{AA1B16A2-4E3F-420E-A827-824AABAFE9BA}.Release|x64.Build.0 = Release|x64
 		{AA1B16A2-4E3F-420E-A827-824AABAFE9BA}.Release|x86.ActiveCfg = Release|Win32
 		{AA1B16A2-4E3F-420E-A827-824AABAFE9BA}.Release|x86.Build.0 = Release|Win32
+		{BF129D95-0DEA-4851-B176-6A97033F1E34}.Debug|x64.ActiveCfg = Debug|x64
+		{BF129D95-0DEA-4851-B176-6A97033F1E34}.Debug|x64.Build.0 = Debug|x64
+		{BF129D95-0DEA-4851-B176-6A97033F1E34}.Debug|x86.ActiveCfg = Debug|Win32
+		{BF129D95-0DEA-4851-B176-6A97033F1E34}.Debug|x86.Build.0 = Debug|Win32
+		{BF129D95-0DEA-4851-B176-6A97033F1E34}.Release|x64.ActiveCfg = Release|x64
+		{BF129D95-0DEA-4851-B176-6A97033F1E34}.Release|x64.Build.0 = Release|x64
+		{BF129D95-0DEA-4851-B176-6A97033F1E34}.Release|x86.ActiveCfg = Release|Win32
+		{BF129D95-0DEA-4851-B176-6A97033F1E34}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
