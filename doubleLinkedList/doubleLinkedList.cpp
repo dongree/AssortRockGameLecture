@@ -8,6 +8,7 @@ enum MAIN_MENU {
 	MM_DELETE,
 	MM_SEARCH,
 	MM_OUTPUT,
+	MM_SORT,
 	MM_EXIT
 
 };
@@ -19,7 +20,8 @@ int outputMenu() {
 	cout << "2. 학생삭제" << endl;
 	cout << "3. 학생탐색" << endl;
 	cout << "4. 학생출력" << endl;
-	cout << "5. 종료" << endl;
+	cout << "5. 학생정렬" << endl;
+	cout << "6. 종료" << endl;
 	cout << "메뉴를 선택하세요 : ";
 	int input = inputInt();
 	if (input <= MM_NONE || input >> MM_EXIT)
@@ -53,7 +55,11 @@ int main() {
 		case MM_OUTPUT:
 			output(&list);
 			break;
+		case MM_SORT:
+			sort(&list);
+			break;
 		}
+
 	}
 	
 	destroyList(&list);

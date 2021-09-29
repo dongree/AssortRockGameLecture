@@ -11,6 +11,12 @@ enum OUTPUT_TYPE {
 	OT_INVERSE
 };
 
+enum SORT_TYPE {
+	ST_NONE,
+	ST_NUMBER,
+	ST_SCORE
+};
+
 // 헤더파일에는 보통 함수 선언부분을 만들어준다.
 #define NAME_SIZE 32
 
@@ -70,3 +76,4 @@ void outputStudent(const PSTUDENT pStudent);
 void output(PLIST pList);
 void search(PLIST pList);
 void Delete(PLIST pList);
+void sort(PLIST pList);

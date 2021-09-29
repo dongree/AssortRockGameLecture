@@ -175,3 +175,74 @@ void Delete(PLIST pList) {
 	cout << "삭제할 학생을 찾을 수 없습니다." << endl;
 	system("pause");
 }
+
+void sort(PLIST pList)
+{
+	int menu;
+	system("cls");
+	cout << "=========================== 학생정렬 ===========================" << endl;
+
+	while (true) {
+		cout << "1. 학번정렬" << endl;
+		cout << "2. 점수정렬" << endl;
+		cout << "번호를 입력해주세요 : ";
+		menu = inputInt();
+		if (menu > ST_NONE && menu <= ST_SCORE) {
+			cout << "잘못 선택하였습니다." << endl;
+			system("pause");
+			return;
+		}
+	}
+	
+	PNODE pNode = pList->begin->pNext;
+	PNODE pNext = NULL;
+
+	switch(menu) {
+	case ST_NUMBER:
+		// 학번순으로 정렬
+		for (int i = pList->size; i > 0 ; i--) {
+			for (int j = 0; j < i-1; j++) {
+				pNext = pNode->pNext; 
+				if (pNode->student.number > pNext->student.number) {
+					pNode->pNext = pNext->pNext;
+					pNext->pPrev = pNode->pPrev;
+					pNode->pPrev->pNext = pNext;
+					pNode->pNext->pPrev = pNode;
+					pNode->pPrev = pNext;
+					pNext->pNext = pNode;
+				}
+				else {
+					pNode = pNode->pNext;
+				}
+			}
+			pNode = pList->begin->pNext;
+		}
+
+		break;
+	case ST_SCORE:
+		// 점수순으로 정렬
+		for (int i = pList->size; i > 0; i--) {
+			for (int j = 0; j < i - 1; j++) {
+				pNext = pNode->pNext;
+				if (pNode->student.total > pNext->student.total) {
+					pNode->pNext = pNext->pNext;
+					pNext->pPrev = pNode->pPrev;
+					pNode->pPrev->pNext = pNext;
+					pNode->pNext->pPrev = pNode;
+					pNode->pPrev = pNext;
+					pNext->pNext = pNode;
+				}
+				else {
+					pNode = pNode->pNext;
+				}
+			}
+			pNode = pList->begin->pNext;
+		}
+		break;
+	}
+	while (pNode != pList->end) {
+		outputStudent(&pNode->student);
+		pNode = pNode->pNext;
+	}
+	system("pause");
+}
